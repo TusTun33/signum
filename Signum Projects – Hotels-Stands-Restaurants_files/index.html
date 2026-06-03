@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signum Projects – Hotels · Stands · Restaurants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── RESET ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── VARIABLES ──────────────────────────── */
+    :root {
+      --black:  #1B1B1B;
+      --cream:  #F7F4EB;
+      --gray:   #595853;
+      --line:   #D8D4C8;
+      --font:   'Epilogue', sans-serif;
+      --side:   clamp(20px, 7vw, 140px);   /* margen lateral adaptable */
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--cream);
+      color: var(--black);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--cream);
+      border-bottom: 1px solid var(--line);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--side);
+    }
+
+    .header-logo img {
+      height: 26px;
+      width: auto;
+      display: block;
+    }
+
+    .site-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 36px;
+    }
+    .site-nav a {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gray);
+      font-weight: 400;
+      transition: color .2s;
+    }
+    .site-nav a:hover,
+    .site-nav a.active { color: var(--black); }
+
+    /* burger – solo móvil */
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-burger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--black);
+      transition: transform .3s, opacity .3s;
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* menú desplegable móvil */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0; right: 0;
+      background: var(--cream);
+      border-bottom: 1px solid var(--line);
+      z-index: 99;
+      padding: 24px var(--side);
+      flex-direction: column;
+      gap: 20px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gray);
+      font-weight: 400;
+    }
+
+    /* ── MARQUEE ────────────────────────────── */
+    .hero-marquee {
+      background: var(--black);
+      overflow: hidden;
+      padding: 15px 0;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: scroll-left 20s linear infinite;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding-right: 36px;
+      white-space: nowrap;
+    }
+    .marquee-word {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(247,244,235,.7);
+    }
+    .marquee-sep {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: rgba(247,244,235,.25);
+      flex-shrink: 0;
+    }
+    @keyframes scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── PROYECTOS – estructura original ───── */
+    .projects-wrap {
+      padding: 0 var(--side);
+    }
+
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: #aaa;
+      font-weight: 400;
+      padding: 20px 0 14px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 60px;
+    }
+
+    /* cada fila: foto izquierda + texto derecha */
+    .project-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 70px;
+      border-bottom: 2px solid var(--black);
+      margin-bottom: 70px;
+    }
+    .project-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    /* foto */
+    .proj-img {
+      overflow: hidden;
+    }
+    .proj-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .7s ease;
+    }
+    .project-row:hover .proj-img img { transform: scale(1.03); }
+
+    /* texto */
+    .proj-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0 0 40px;
+    }
+
+    .proj-num {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--gray);
+      margin-bottom: 0;
+    }
+
+    .proj-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      color: var(--black);
+    }
+
+    .proj-desc {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray);
+      font-weight: 200;
+    }
+
+    /* flecha SVG original animada */
+    .proj-arrow {
+      width: 60px;
+      height: 80px;
+      flex-shrink: 0;
+      margin-top: 8px;
+      transition: transform .3s;
+    }
+    .proj-arrow:hover { transform: translateY(6px); }
+    .proj-arrow polygon { fill: var(--black); }
+
+    /* ── SECCIÓN "JUNTOS CONSTRUIREMOS" ─────── */
+    .build-section {
+      padding: 8% var(--side);
+      display: grid;
+      grid-template-columns: 35% 1fr;
+      gap: 60px;
+      align-items: start;
+      border-top: 1px solid var(--line);
+    }
+
+    .build-title {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      color: var(--black);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 48px;
+    }
+
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-item svg {
+      width: 22px;
+      height: 22px;
+    }
+    .feature-title {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--black);
+      line-height: 1.4;
+    }
+    .feature-desc {
+      font-size: 12px;
+      font-weight: 200;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ── CTA ────────────────────────────────── */
+    .cta-section {
+      margin: 0 var(--side) 8%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 460px;
+      border: 1px solid var(--line);
+    }
+
+    .cta-img {
+      background-image: url('assets-clean/odmadrid_05-rooms_01_roomdeluxe-001.jpg');
+      background-size: cover;
+      background-position: center;
+      min-height: 300px;
+    }
+
+    .cta-body {
+      background: var(--black);
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cta-tagline {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(247,244,235,.4);
+    }
+
+    .cta-title {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+      color: var(--cream);
+    }
+
+    .cta-desc {
+      font-size: 14px;
+      line-height: 1.75;
+      color: rgba(247,244,235,.55);
+      font-weight: 200;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      border: 1px solid rgba(247,244,235,.5);
+      color: var(--cream);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      font-family: var(--font);
+      font-weight: 400;
+      text-decoration: none;
+      border-radius: 50px;
+      width: fit-content;
+      transition: background .25s, color .25s, border-color .25s;
+    }
+    .cta-btn:hover {
+      background: var(--cream);
+      color: var(--black);
+      border-color: var(--cream);
+    }
+
+    /* ── FOOTER ─────────────────────────────── */
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding: 28px var(--side);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--cream);
+    }
+    .footer-logo img {
+      height: 18px;
+      width: auto;
+      opacity: .65;
+    }
+    .footer-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+    }
+    .footer-nav a {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gray);
+      font-weight: 400;
+      transition: color .2s;
+    }
+    .footer-nav a:hover { color: var(--black); }
+    .footer-copy {
+      font-size: 10px;
+      color: #aaa;
+      font-weight: 300;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+
+    /* Tablet – hasta 1024px */
+    @media (max-width: 1024px) {
+      :root { --side: clamp(16px, 5vw, 80px); }
+
+      .build-section {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .build-title { font-size: 32px; }
+
+      .cta-title { font-size: 28px; }
+      .cta-body { padding: 44px 36px; }
+    }
+
+    /* Tablet pequeña – hasta 768px */
+    @media (max-width: 768px) {
+      :root { --side: 20px; }
+
+      /* nav */
+      .site-nav { display: none; }
+      .nav-burger { display: flex; }
+
+      /* proyectos: imagen arriba, texto abajo */
+      .project-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-bottom: 48px;
+        margin-bottom: 48px;
+      }
+      .proj-img img { height: 240px; object-fit: cover; }
+      .proj-body { padding: 0; }
+      .proj-title { font-size: 22px; }
+
+      /* build */
+      .build-section { padding: 10% var(--side); }
+      .build-title { font-size: 26px; }
+      .features-grid { grid-template-columns: 1fr; gap: 24px; }
+
+      /* cta */
+      .cta-section {
+        margin: 0 var(--side) 12%;
+        grid-template-columns: 1fr;
+      }
+      .cta-img { min-height: 220px; }
+      .cta-body { padding: 36px 28px; }
+      .cta-title { font-size: 24px; }
+
+      /* footer */
+      .site-footer {
+        flex-direction: column;
+        gap: 18px;
+        text-align: center;
+      }
+      .footer-nav ul { justify-content: center; }
+    }
+
+    /* Móvil pequeño – hasta 480px */
+    @media (max-width: 480px) {
+      .site-header { height: 60px; }
+      .mobile-menu { top: 60px; }
+      .header-logo img { height: 22px; }
+      .proj-title { font-size: 20px; }
+      .build-title { font-size: 22px; }
+      .cta-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ══════════════════════════════ -->
+<header class="site-header">
+  <div class="header-logo">
+    <a href="#"><img src="assets-clean/LOGO-SIGNUM.png" alt="Signum Projects"></a>
+  </div>
+  <nav class="site-nav">
+    <ul>
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="#">Conócenos</a></li>
+      <li><a href="#">Proyectos</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </nav>
+  <button class="nav-burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- menú móvil desplegable -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#">Home</a>
+  <a href="#">Conócenos</a>
+  <a href="#">Proyectos</a>
+  <a href="#">Contacto</a>
+</div>
+
+<!-- ═══ MARQUEE ══════════════════════════════ -->
+<div class="hero-marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item">
+      <span class="marquee-word">Compromiso</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Efectividad</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Creatividad</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Ilusión</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Diseño</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Excelencia</span><span class="marquee-sep"></span>
+    </div>
+    <div class="marquee-item" aria-hidden="true">
+      <span class="marquee-word">Compromiso</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Efectividad</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Creatividad</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Ilusión</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Diseño</span><span class="marquee-sep"></span>
+      <span class="marquee-word">Excelencia</span><span class="marquee-sep"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROYECTOS ═════════════════════════════ -->
+<main>
+  <div class="projects-wrap">
+    <p class="section-label">Proyectos seleccionados</p>
+
+    <!-- 01 – Hotel OD Madrid -->
+    <div class="project-row">
+      <div class="proj-img">
+        <img src="assets-clean/odmadrid_05-rooms_01_roomdeluxe-001.jpg" alt="Hotel OD Madrid">
+      </div>
+      <div class="proj-body">
+        <p class="proj-num">01</p>
+        <h2 class="proj-title">Hotel OD Madrid</h2>
+        <p class="proj-desc">Diseño de habitaciones de lujo que combina materiales premium con una estética contemporánea. Un proyecto de interiorismo integral concebido para redefinir la experiencia hotelera en la capital.</p>
+        <svg class="proj-arrow" viewBox="0 0 85.2 113" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="41.7,0 80.3,54.6 0,54.6 0,57.6 80.3,57.6 41.1,113 44.8,113 84,57.6 85.2,56.2 84,54.6 45.4,0"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 02 – Rest. Zuma Ibiza -->
+    <div class="project-row">
+      <div class="proj-img">
+        <img src="assets-clean/zuma-ibiza-19.jpg" alt="Rest. Zuma Ibiza">
+      </div>
+      <div class="proj-body">
+        <p class="proj-num">02</p>
+        <h2 class="proj-title">Rest. Zuma Ibiza</h2>
+        <p class="proj-desc">Ubicado entre elegantes boutiques y animados restaurantes en el puerto deportivo, el Zuma's Rooftop Terrace ofrece la mejor experiencia gastronómica japonesa de la ciudad con impresionantes vistas al puerto deportivo de Ibiza, Dalt Vila y el casco antiguo histórico.</p>
+        <svg class="proj-arrow" viewBox="0 0 85.2 113" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="41.7,0 80.3,54.6 0,54.6 0,57.6 80.3,57.6 41.1,113 44.8,113 84,57.6 85.2,56.2 84,54.6 45.4,0"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 03 – Rest. Zuma Madrid -->
+    <div class="project-row">
+      <div class="proj-img">
+        <img src="assets-clean/Zuma-madrid3.jpg" alt="Rest. Zuma Madrid">
+      </div>
+      <div class="proj-body">
+        <p class="proj-num">03</p>
+        <h2 class="proj-title">Rest. Zuma Madrid</h2>
+        <p class="proj-desc">Ubicado en el glamoroso y exclusivo barrio de Salamanca, Zuma trae su cocina japonesa contemporánea de renombre mundial a la capital española. Zuma ofrece un toque sofisticado al estilo tradicional japonés de izakaya, que ofrece un auténtico sabor de Oriente al tiempo que respeta las tradiciones del pasado.</p>
+        <svg class="proj-arrow" viewBox="0 0 85.2 113" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="41.7,0 80.3,54.6 0,54.6 0,57.6 80.3,57.6 41.1,113 44.8,113 84,57.6 85.2,56.2 84,54.6 45.4,0"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 04 – Stand American Orthodontics -->
+    <div class="project-row">
+      <div class="proj-img">
+        <img src="assets-clean/stand-ao-1-scaled.jpg" alt="Stand American Orthodontics">
+      </div>
+      <div class="proj-body">
+        <p class="proj-num">04</p>
+        <h2 class="proj-title">Stand American Orthodontics</h2>
+        <p class="proj-desc">American Orthodontics proporciona productos de calidad, entrega confiable y servicio personalizado al especialista en ortodoncia.</p>
+        <svg class="proj-arrow" viewBox="0 0 85.2 113" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="41.7,0 80.3,54.6 0,54.6 0,57.6 80.3,57.6 41.1,113 44.8,113 84,57.6 85.2,56.2 84,54.6 45.4,0"/>
+        </svg>
+      </div>
+    </div>
+
+  </div><!-- /projects-wrap -->
+
+  <!-- ═══ JUNTOS CONSTRUIREMOS ══════════════ -->
+  <section class="build-section">
+    <h2 class="build-title">Juntos construiremos tu espacio</h2>
+    <div class="features-grid">
+
+      <div class="feature-item">
+        <svg viewBox="0 0 27.4 30.4" fill="none" stroke="currentColor" stroke-width="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.995 15.005a.7.7 0 0 0-.99.99l5 5a.7.7 0 0 0 .99 0l9-9a.7.7 0 0 0-.99-.99L12.5 19.51Z"/>
+          <path d="M27.695 4.608l-13-3.78a.7.7 0 0 0-.39 0l-13 3.78A.7.7 0 0 0 .8 5.28V19.15c0 5.889 9.267 10.72 13.495 12.019a.7.7 0 0 0 .41 0C19.408 29.753 28.2 24.772 28.2 19.15V5.28a.7.7 0 0 0-.505-.672ZM26.8 19.15c0 4.393-7.198 9.017-12.298 10.617C9.4 28.136 2.2 23.494 2.2 19.15V5.806L14.5 2.229 26.8 5.806Z"/>
+        </svg>
+        <span class="feature-title">Satisfaction guaranteed</span>
+        <span class="feature-desc">Compromiso total con el resultado final del proyecto.</span>
+      </div>
+
+      <div class="feature-item">
+        <svg viewBox="0 0 35 29.17" fill="none" stroke="currentColor" stroke-width="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M34.36 5.849a2.188 2.188 0 0 0-1.547-.641H23.333V3.021A2.188 2.188 0 0 0 21.146.833H13.854a2.188 2.188 0 0 0-2.188 2.188V5.208H2.188A2.188 2.188 0 0 0 0 7.396v20.417A2.188 2.188 0 0 0 2.188 30h30.625A2.188 2.188 0 0 0 35 27.813V7.396a2.188 2.188 0 0 0-.64-1.547ZM13.125 3.021a.73.73 0 0 1 .73-.73h7.291a.73.73 0 0 1 .73.73v2.187h-8.75ZM33.542 27.813a.73.73 0 0 1-.73.729H2.188a.73.73 0 0 1-.73-.73V15.417h4.375v3.645a.73.73 0 0 0 .73.729h4.374a.73.73 0 0 0 .73-.73v-3.645h13.125v3.645a.73.73 0 0 0 .73.73h4.375a.73.73 0 0 0 .729-.73v-3.645h4.375Z"/>
+        </svg>
+        <span class="feature-title">Personalized designs</span>
+        <span class="feature-desc">Cada proyecto es único y adaptado a tu visión.</span>
+      </div>
+
+      <div class="feature-item">
+        <svg viewBox="0 0 27.48 26.08" fill="none" stroke="currentColor" stroke-width="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M27.485 9.317a.925.925 0 0 0-.316-.437.744.744 0 0 0-.477-.149H18.036L14.835.599a.989.989 0 0 0-.335-.362.817.817 0 0 0-.89 0 .987.987 0 0 0-.334.362L10.188 8.731l-8.656.081a.732.732 0 0 0-.47.151.911.911 0 0 0-.309.435.927.927 0 0 0-.01.546.807.807 0 0 0 .293.43l7.083 5.677-2.318 9.06a.964.964 0 0 0 .031.525.814.814 0 0 0 1.244.402L14.169 21.06l7.083 4.88a.807.807 0 0 0 .467.147.735.735 0 0 0 .524-.033.815.815 0 0 0 .295-.41.947.947 0 0 0 .017-.533L20.133 16.1l7.083-5.807a.83.83 0 0 0 .281-.435.945.945 0 0 0-.012-.54Z"/>
+        </svg>
+        <span class="feature-title">Premium supplies</span>
+        <span class="feature-desc">Proveedores seleccionados de primer nivel.</span>
+      </div>
+
+      <div class="feature-item">
+        <svg viewBox="0 0 20.06 30.12" fill="none" stroke="currentColor" stroke-width="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19.978 13.911a.427.427 0 0 0-.196-.27L9.755 1.107a.628.628 0 0 0-.841-.088.564.564 0 0 0-.126.176L.226 17.257c-.015.01-.035.014-.049.026a.628.628 0 0 0-.176.72.623.623 0 0 0 .081.117c.004.007.002.016.006.024.007.012.022.017.03.029.012.014.018.033.032.046L10.619 30.638A.614.614 0 0 0 10.936 31a.741.741 0 0 0 .276 0 .615.615 0 0 0 .565-.289l8.161-16.321a.615.615 0 0 0 .04-.479Z"/>
+        </svg>
+        <span class="feature-title">Up-to-date trends</span>
+        <span class="feature-desc">Diseño contemporáneo y atemporal.</span>
+      </div>
+
+      <div class="feature-item">
+        <svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.1" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="15" cy="15" r="13.5"/>
+          <path d="M15 8v7.5l4.5 4.5"/>
+        </svg>
+        <span class="feature-title">Entregas en plazo</span>
+        <span class="feature-desc">Gestión eficiente para cumplir cada etapa del proyecto.</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ CTA ══════════════════════════════════ -->
+  <div class="cta-section">
+    <div class="cta-img" role="img" aria-label="Proyecto de interiorismo Signum"></div>
+    <div class="cta-body">
+      <p class="cta-tagline">De tu imaginación a la realidad</p>
+      <h2 class="cta-title">Ofrecemos un servicio completo de diseño, personalizado.</h2>
+      <p class="cta-desc">Signum Projects se enfoca en el mundo de la construcción dándole una forma revolucionaria al proceso constructivo, siendo totalmente transparentes.</p>
+      <a href="#" class="cta-btn">Saber más</a>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-logo">
+    <a href="#"><img src="assets-clean/LOGO-SIGNUM.png" alt="Signum Projects"></a>
+  </div>
+  <nav class="footer-nav">
+    <ul>
+      <li><a href="#">Conócenos</a></li>
+      <li><a href="#">Proyectos</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </nav>
+  <p class="footer-copy">© 2025 Signum Projects. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+  const burger = document.getElementById('burger');
+  const menu   = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    menu.classList.toggle('open');
+  });
+</script>
+
+</body>
+</html>
